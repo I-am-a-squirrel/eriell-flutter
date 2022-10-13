@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_splash_screen/easy_splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +25,24 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MySplashPage(),
+    );
+  }
+}
+
+class MySplashPage extends StatefulWidget {
+  const MySplashPage({super.key});
+
+  @override
+  State<MySplashPage> createState() => _MySplashPageState();
+}
+
+class _MySplashPageState extends State<MySplashPage> {
+  @override
+  Widget build(BuildContext context) {
+    return EasySplashScreen(
+      logo: Image.asset('assets/images/eriell_logo.svg'),
+      navigator: const MyHomePage(title: 'ERIELL Demo App'),
     );
   }
 }
