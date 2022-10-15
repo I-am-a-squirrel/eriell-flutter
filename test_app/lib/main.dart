@@ -113,7 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.pushReplacement(
                         context,
-                        newRoute,
+                        CupertinoPageRoute(
+                            builder: (context) => const DataView(),
+                        ),
                     );
                   },
               )
@@ -137,11 +139,39 @@ class _DataViewState extends State<DataView> {
           builder: (context, orientation) {
             return Center(
               child: orientation == Orientation.portrait
-                  ? _portraitView() //The widget for portrait orientation. TODO
-                  : _landscapeView(), //The widget for landscape orientation. TODO
+                  ? const _PortraitView() //The widget for portrait orientation.
+                  : const _LandscapeView(), //The widget for landscape orientation.
             );
           },
         ),
     );
+  }
+}
+
+class _PortraitView extends StatefulWidget {
+  const _PortraitView({super.key});
+
+  @override
+  State<_PortraitView> createState() => _PortraitViewState();
+}
+
+class _PortraitViewState extends State<_PortraitView> {
+  @override
+  Widget build(BuildContext context) {
+    return const Text('portrait view');
+  }
+}
+
+class _LandscapeView extends StatefulWidget {
+  const _LandscapeView({super.key});
+
+  @override
+  State<_LandscapeView> createState() => _LandscapeViewState();
+}
+
+class _LandscapeViewState extends State<_LandscapeView> {
+  @override
+  Widget build(BuildContext context) {
+    return const Text('landscape view');
   }
 }
