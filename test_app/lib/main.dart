@@ -36,9 +36,7 @@ class _MySplashPageState extends State<MySplashPage> {
   @override
   Widget build(BuildContext context) {
     return EasySplashScreen(
-      logo: Image.file(
-          File('assets/images/eriell_logo.png')
-      ),
+      logo: Image.asset('assets/images/eriell_logo.png'),
       navigator: const MyHomePage(title: 'ERIELL Demo App'),
     );
   }
@@ -89,38 +87,38 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return CupertinoPageScaffold(
-        child: Column(
-            children: <Widget> [
-              const SizedBox(
-                height: 50.0,
-              ),
-              //login
-              CupertinoTextField(
-                controller: _loginController,
-              ),
-              const SizedBox(
-                height: 40.0,
-              ),
-              //password
-              CupertinoTextField(
-                controller: _passwordController,
-              ),
-              const SizedBox(
-                height: 40.0,
-              ),
-              CupertinoButton(
-                  child: const Text('Sign In'),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) => const DataView(),
-                        ),
-                    );
-                  },
-              )
-            ],
-        ),
+      child: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 50.0,
+          ),
+          //login
+          CupertinoTextField(
+            controller: _loginController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          //password
+          CupertinoTextField(
+            controller: _passwordController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          CupertinoButton(
+            child: const Text('Sign In'),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => const DataView(),
+                ),
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 }
@@ -135,15 +133,15 @@ class _DataViewState extends State<DataView> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return Center(
-              child: orientation == Orientation.portrait
-                  ? const _PortraitView() //The widget for portrait orientation.
-                  : const _LandscapeView(), //The widget for landscape orientation.
-            );
-          },
-        ),
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          return Center(
+            child: orientation == Orientation.portrait
+                ? const _PortraitView() //The widget for portrait orientation.
+                : const _LandscapeView(), //The widget for landscape orientation.
+          );
+        },
+      ),
     );
   }
 }
@@ -158,7 +156,27 @@ class _PortraitView extends StatefulWidget {
 class _PortraitViewState extends State<_PortraitView> {
   @override
   Widget build(BuildContext context) {
-    return const Text('portrait view');
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Portrait View'),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Center(
+              child: Text('Place for chart'),
+            ),
+            SizedBox(
+              height: 40.0,
+            ),
+            Center(
+              child: Text('Place for sheet'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -172,6 +190,6 @@ class _LandscapeView extends StatefulWidget {
 class _LandscapeViewState extends State<_LandscapeView> {
   @override
   Widget build(BuildContext context) {
-    return const Text('landscape view');
+    return const Text('Place for sheet');
   }
 }
