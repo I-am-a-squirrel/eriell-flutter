@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_dart/firebase_dart.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
+import 'package:mrx_charts/mrx_charts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -112,7 +115,22 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.pushReplacement(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => const DataView(),
+                  builder: (context) => DataView(
+                    exampleItems: [
+                      [
+                        ChartGroupPieDataItem(
+                            amount: 1, color: Colors.red, label: 'first'),
+                        ChartGroupPieDataItem(
+                            amount: 1, color: Colors.orange, label: 'second'),
+                        ChartGroupPieDataItem(
+                            amount: 2, color: Colors.yellow, label: 'third'),
+                        ChartGroupPieDataItem(
+                            amount: 6, color: Colors.green, label: 'fourth'),
+                        ChartGroupPieDataItem(
+                            amount: 12, color: Colors.blue, label: 'fifth'),
+                      ]
+                    ],
+                  ),
                 ),
               );
             },
@@ -123,8 +141,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class DataCubit extends Cubit<Map<String, double>> {
+  DataCubit(initialData) : super(initialData);
+
+  List<List<ChartGroupPieDataItem>> toPie(state) {
+    List<List<ChartGroupPieDataItem>> result = [[]];
+    for (MapEntry mapItem in state.entries) {
+    result[0].add(ChartGroupPieDataItem(amount: mapItem.value, color: Color(Random().nextInt(pow(2, 32).ceil())), label: mapItem.key));
+    }
+    return result;
+  }
+}
+
 class DataView extends StatefulWidget {
-  const DataView({super.key});
+  const DataView({super.key, required this.exampleItems});
+
+  final List<List<ChartGroupPieDataItem>> exampleItems;
+
   @override
   State<DataView> createState() => _DataViewState();
 }
@@ -137,8 +170,18 @@ class _DataViewState extends State<DataView> {
         builder: (context, orientation) {
           return Center(
             child: orientation == Orientation.portrait
-                ? const _PortraitView() //The widget for portrait orientation.
-                : const _LandscapeView(), //The widget for landscape orientation.
+                ? _PortraitView(layers: [
+                    ChartGroupPieLayer(
+                      items: widget.exampleItems,
+                      settings: const ChartGroupPieSettings(),
+                    )
+                  ]) //The widget for portrait orientation.
+                : _LandscapeView(layers: [
+                    ChartGroupPieLayer(
+                      items: widget.exampleItems,
+                      settings: const ChartGroupPieSettings(),
+                    )
+                  ]), //The widget for landscape orientation.
           );
         },
       ),
@@ -147,7 +190,9 @@ class _DataViewState extends State<DataView> {
 }
 
 class _PortraitView extends StatefulWidget {
-  const _PortraitView({super.key});
+  const _PortraitView({super.key, required this.layers});
+
+  final List<ChartLayer> layers;
 
   @override
   State<_PortraitView> createState() => _PortraitViewState();
@@ -165,7 +210,8 @@ class _PortraitViewState extends State<_PortraitView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Center(
-              child: Text('Place for chart'),
+              child: _Chart(),
+              //child: Text('Place for chart'),
             ),
             SizedBox(
               height: 40.0,
@@ -181,8 +227,9 @@ class _PortraitViewState extends State<_PortraitView> {
 }
 
 class _LandscapeView extends StatefulWidget {
-  const _LandscapeView({super.key});
+  const _LandscapeView({super.key, required this.layers});
 
+  final List<ChartLayer> layers;
   @override
   State<_LandscapeView> createState() => _LandscapeViewState();
 }
@@ -190,6 +237,22 @@ class _LandscapeView extends StatefulWidget {
 class _LandscapeViewState extends State<_LandscapeView> {
   @override
   Widget build(BuildContext context) {
-    return const Text('Place for sheet');
+    return const _Chart();
+  }
+}
+
+class _Chart extends StatefulWidget {
+  const _Chart({super.key});
+
+  @override
+  State<_Chart> createState() => _ChartState();
+}
+
+class _ChartState extends State<_Chart> {
+  @override
+  Widget build(BuildContext context) {
+    return Chart(
+      layers: exampleLayersGetter,//use BLoC to finish Chart data inheritance
+    );
   }
 }
