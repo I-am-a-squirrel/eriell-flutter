@@ -147,16 +147,17 @@ class DataCubit extends Cubit<Map<String, double>> {
   List<List<ChartGroupPieDataItem>> toPie(state) {
     List<List<ChartGroupPieDataItem>> result = [[]];
     for (MapEntry mapItem in state.entries) {
-    result[0].add(ChartGroupPieDataItem(amount: mapItem.value, color: Color(Random().nextInt(pow(2, 32).ceil())), label: mapItem.key));
+      result[0].add(ChartGroupPieDataItem(
+          amount: mapItem.value,
+          color: Color(Random().nextInt(pow(2, 32).ceil())),
+          label: mapItem.key));
     }
     return result;
   }
 }
 
 class DataView extends StatefulWidget {
-  const DataView({super.key, required this.exampleItems});
-
-  final List<List<ChartGroupPieDataItem>> exampleItems;
+  const DataView({super.key});
 
   @override
   State<DataView> createState() => _DataViewState();
@@ -165,34 +166,33 @@ class DataView extends StatefulWidget {
 class _DataViewState extends State<DataView> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          return Center(
-            child: orientation == Orientation.portrait
-                ? _PortraitView(layers: [
-                    ChartGroupPieLayer(
-                      items: widget.exampleItems,
-                      settings: const ChartGroupPieSettings(),
-                    )
-                  ]) //The widget for portrait orientation.
-                : _LandscapeView(layers: [
-                    ChartGroupPieLayer(
-                      items: widget.exampleItems,
-                      settings: const ChartGroupPieSettings(),
-                    )
-                  ]), //The widget for landscape orientation.
-          );
-        },
+    return BlocProvider(
+      create: (_) => DataCubit(
+          {
+            'first': 2.0,
+            'second': 3.0,
+            'third': 5.0,
+            'fourth': 7.0,
+            'fifth': 11.0,
+          }
+      ),
+      child: CupertinoPageScaffold(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return Center(
+              child: orientation == Orientation.portrait
+                  ? _PortraitView() //The widget for portrait orientation.
+                  : _LandscapeView(), //The widget for landscape orientation.
+            );
+          },
+        ),
       ),
     );
   }
 }
 
 class _PortraitView extends StatefulWidget {
-  const _PortraitView({super.key, required this.layers});
-
-  final List<ChartLayer> layers;
+  const _PortraitView({super.key});
 
   @override
   State<_PortraitView> createState() => _PortraitViewState();
@@ -227,9 +227,8 @@ class _PortraitViewState extends State<_PortraitView> {
 }
 
 class _LandscapeView extends StatefulWidget {
-  const _LandscapeView({super.key, required this.layers});
+  const _LandscapeView({super.key});
 
-  final List<ChartLayer> layers;
   @override
   State<_LandscapeView> createState() => _LandscapeViewState();
 }
@@ -252,7 +251,7 @@ class _ChartState extends State<_Chart> {
   @override
   Widget build(BuildContext context) {
     return Chart(
-      layers: exampleLayersGetter,//use BLoC to finish Chart data inheritance
+      layers: exampleLayersGetter, //use BLoC to finish Chart data inheritance
     );
   }
 }
