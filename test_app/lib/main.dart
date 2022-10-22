@@ -7,6 +7,7 @@ import 'package:firebase_dart/firebase_dart.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spreadsheet_table/spreadsheet_table.dart';
 
 void main() {
   runApp(const MyApp());
@@ -204,7 +205,7 @@ class _PortraitViewState extends State<_PortraitView> {
               height: 40.0,
             ),
             Center(
-              child: Text('Place for sheet'),
+              child: _Table(),
             ),
           ],
         ),
@@ -261,5 +262,36 @@ class _ChartState extends State<_Chart> {
         );
       },
     );
+  }
+}
+
+class _Table extends StatefulWidget {
+  const _Table({super.key});
+
+  @override
+  State<_Table> createState() => _TableState();
+}
+
+class _TableState extends State<_Table> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<DataCubit, Map<String, double>>(
+        builder: (context, state) {
+      return SpreadsheetTable(
+          colCount: 1,
+          rowsCount: state.length,
+          colHeaderBuilder: (_, __) => const Text('Value'),
+          rowHeaderBuilder: (_, index) {
+            return Text(state.keys.elementAt(index));
+          },
+          cellBuilder: (_, int row, __) {
+            return Center(
+              child: Text(state.values.elementAt(row).toString()),
+            );
+          },
+          legendBuilder: (_) {
+            return const Text('Example Data');
+          });
+    });
   }
 }
