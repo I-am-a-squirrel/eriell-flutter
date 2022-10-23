@@ -136,7 +136,7 @@ class DataCubit extends Cubit<Map<String, double>> {
       result[0].add(ChartGroupPieDataItem(
           amount: mapItem.value,
           color: Color.fromARGB(
-              255,
+              100 + Random().nextInt(155),
               Random().nextInt(pow(2, 8).ceil()),
               Random().nextInt(pow(2, 8).ceil()),
               Random().nextInt(pow(2, 8).ceil())),
@@ -277,21 +277,41 @@ class _TableState extends State<_Table> {
   Widget build(BuildContext context) {
     return BlocBuilder<DataCubit, Map<String, double>>(
         builder: (context, state) {
-      return SpreadsheetTable(
+      return Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints.expand(
+          width: MediaQuery.of(context).size.width / 2,
+          height: MediaQuery.of(context).size.height / 2,
+        ),
+        child: SpreadsheetTable(
+          cellWidth: MediaQuery.of(context).size.width / 4,
+          cellHeight: MediaQuery.of(context).size.height / (3*state.length),
           colCount: 1,
           rowsCount: state.length,
-          colHeaderBuilder: (_, __) => const Text('Value'),
+          colHeaderBuilder: (_, __) => const FittedBox(
+            fit: BoxFit.contain,
+            child: Text('Value'),
+          ),
           rowHeaderBuilder: (_, index) {
-            return Text(state.keys.elementAt(index));
+            return FittedBox(
+              fit: BoxFit.contain,
+              child: Text(state.keys.elementAt(index)),
+            );
           },
           cellBuilder: (_, int row, __) {
-            return Center(
+            return FittedBox(
+              fit: BoxFit.contain,
               child: Text(state.values.elementAt(row).toString()),
             );
           },
           legendBuilder: (_) {
-            return const Text('Example Data');
-          });
+            return const FittedBox(
+              fit: BoxFit.contain,
+              child: Text('Example data'),
+            );
+          },
+        ),
+      );
     });
   }
 }
