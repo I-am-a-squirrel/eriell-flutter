@@ -2,11 +2,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+//import 'package:flutter/material.dart';
 import 'package:firebase_dart/firebase_dart.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spreadsheet_table/spreadsheet_table.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -147,16 +149,21 @@ class DataCubit extends Cubit<Map<String, double>> {
   List<List<ChartGroupPieDataItem>> toPie(state) {
     List<List<ChartGroupPieDataItem>> result = [[]];
     for (MapEntry mapItem in state.entries) {
-    result[0].add(ChartGroupPieDataItem(amount: mapItem.value, color: Color(Random().nextInt(pow(2, 32).ceil())), label: mapItem.key));
+      result[0].add(ChartGroupPieDataItem(
+          amount: mapItem.value,
+          color: Color.fromARGB(
+              100 + Random().nextInt(155),
+              Random().nextInt(pow(2, 8).ceil()),
+              Random().nextInt(pow(2, 8).ceil()),
+              Random().nextInt(pow(2, 8).ceil())),
+          label: mapItem.key));
     }
     return result;
   }
 }
 
 class DataView extends StatefulWidget {
-  const DataView({super.key, required this.exampleItems});
-
-  final List<List<ChartGroupPieDataItem>> exampleItems;
+  const DataView({super.key});
 
   @override
   State<DataView> createState() => _DataViewState();
@@ -165,25 +172,24 @@ class DataView extends StatefulWidget {
 class _DataViewState extends State<DataView> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          return Center(
-            child: orientation == Orientation.portrait
-                ? _PortraitView(layers: [
-                    ChartGroupPieLayer(
-                      items: widget.exampleItems,
-                      settings: const ChartGroupPieSettings(),
-                    )
-                  ]) //The widget for portrait orientation.
-                : _LandscapeView(layers: [
-                    ChartGroupPieLayer(
-                      items: widget.exampleItems,
-                      settings: const ChartGroupPieSettings(),
-                    )
-                  ]), //The widget for landscape orientation.
-          );
-        },
+    return BlocProvider(
+      create: (_) => DataCubit({
+        'first': 2.0,
+        'second': 3.0,
+        'third': 5.0,
+        'fourth': 7.0,
+        'fifth': 11.0,
+      }),
+      child: CupertinoPageScaffold(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return Center(
+              child: orientation == Orientation.portrait
+                  ? const _PortraitView() //The widget for portrait orientation.
+                  : const _LandscapeView(), //The widget for landscape orientation.
+            );
+          },
+        ),
       ),
     );
   }
@@ -217,7 +223,7 @@ class _PortraitViewState extends State<_PortraitView> {
               height: 40.0,
             ),
             Center(
-              child: Text('Place for sheet'),
+              child: _Table(),
             ),
           ],
         ),
@@ -251,8 +257,80 @@ class _Chart extends StatefulWidget {
 class _ChartState extends State<_Chart> {
   @override
   Widget build(BuildContext context) {
-    return Chart(
-      layers: exampleLayersGetter,//use BLoC to finish Chart data inheritance
+    return BlocBuilder<DataCubit, Map<String, double>>(
+      builder: (context, state) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                constraints: BoxConstraints.expand(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: MediaQuery.of(context).size.height / 4,
+                ),
+                child: Chart(
+                  layers: [
+                    ChartGroupPieLayer(
+                        items: context.read<DataCubit>().toPie(state),
+                        settings: const ChartGroupPieSettings())
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+}
+
+class _Table extends StatefulWidget {
+  const _Table({super.key});
+
+  @override
+  State<_Table> createState() => _TableState();
+}
+
+class _TableState extends State<_Table> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<DataCubit, Map<String, double>>(
+        builder: (context, state) {
+      return Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints.expand(
+          width: MediaQuery.of(context).size.width / 2,
+          height: MediaQuery.of(context).size.height / 2,
+        ),
+        child: SpreadsheetTable(
+          cellWidth: MediaQuery.of(context).size.width / 4,
+          cellHeight: MediaQuery.of(context).size.height / (3*state.length),
+          colCount: 1,
+          rowsCount: state.length,
+          colHeaderBuilder: (_, __) => const FittedBox(
+            fit: BoxFit.contain,
+            child: Text('Value'),
+          ),
+          rowHeaderBuilder: (_, index) {
+            return FittedBox(
+              fit: BoxFit.contain,
+              child: Text(state.keys.elementAt(index)),
+            );
+          },
+          cellBuilder: (_, int row, __) {
+            return FittedBox(
+              fit: BoxFit.contain,
+              child: Text(state.values.elementAt(row).toString()),
+            );
+          },
+          legendBuilder: (_) {
+            return const FittedBox(
+              fit: BoxFit.contain,
+              child: Text('Example data'),
+            );
+          },
+        ),
+      );
+    });
   }
 }
