@@ -9,6 +9,7 @@ import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -116,7 +117,22 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.pushReplacement(
                 context,
                 CupertinoPageRoute(
-                  builder: (context) => const DataView(),
+                  builder: (context) => DataView(
+                    exampleItems: [
+                      [
+                        ChartGroupPieDataItem(
+                            amount: 1, color: Colors.red, label: 'first'),
+                        ChartGroupPieDataItem(
+                            amount: 1, color: Colors.orange, label: 'second'),
+                        ChartGroupPieDataItem(
+                            amount: 2, color: Colors.yellow, label: 'third'),
+                        ChartGroupPieDataItem(
+                            amount: 6, color: Colors.green, label: 'fourth'),
+                        ChartGroupPieDataItem(
+                            amount: 12, color: Colors.blue, label: 'fifth'),
+                      ]
+                    ],
+                  ),
                 ),
               );
             },
@@ -180,7 +196,9 @@ class _DataViewState extends State<DataView> {
 }
 
 class _PortraitView extends StatefulWidget {
-  const _PortraitView({super.key});
+  const _PortraitView({super.key, required this.layers});
+
+  final List<ChartLayer> layers;
 
   @override
   State<_PortraitView> createState() => _PortraitViewState();
@@ -215,8 +233,9 @@ class _PortraitViewState extends State<_PortraitView> {
 }
 
 class _LandscapeView extends StatefulWidget {
-  const _LandscapeView({super.key});
+  const _LandscapeView({super.key, required this.layers});
 
+  final List<ChartLayer> layers;
   @override
   State<_LandscapeView> createState() => _LandscapeViewState();
 }
