@@ -17,7 +17,7 @@ void main() async {
     ..init(path)
     ..registerAdapter(PersonAdapter());
   
-  var authBox = await Hive.openBox('Persons')
+  var authBox = await Hive.openBox('Persons');
   runApp(const MyApp());
 }
 
