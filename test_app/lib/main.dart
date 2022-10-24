@@ -3,21 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 //import 'package:flutter/material.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
-import 'package:hive/hive.dart';
-import 'package:test_app/hive_classes/hive_auth.dart';
 
 
-void main() async {
-  var path = Directory.current.path;
-  Hive
-    ..init(path)
-    ..registerAdapter(PersonAdapter());
-  
-  var authBox = await Hive.openBox('Persons')
+void main() {
   runApp(const MyApp());
 }
 
@@ -73,6 +66,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late TextEditingController _loginController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    _loginController = TextEditingController();
+    _passwordController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +94,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return CupertinoPageScaffold(
       child: Column(
         children: <Widget>[
-          const _SignForm(),
+          const SizedBox(
+            height: 50.0,
+          ),
+          //login
+          CupertinoTextField(
+            controller: _loginController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          //password
+          CupertinoTextField(
+            controller: _passwordController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
           CupertinoButton(
             child: const Text('Sign In'),
             onPressed: () {
@@ -289,54 +314,5 @@ class _TableState extends State<_Table> {
         ),
       );
     });
-  }
-}
-
-class _SignForm extends StatefulWidget {
-  const _SignForm({super.key});
-
-  @override
-  State<_SignForm> createState() => _SignFormState();
-}
-
-class _SignFormState extends State<_SignForm> {
-  late TextEditingController _loginController;
-  late TextEditingController _passwordController;
-
-  @override
-  void initState() {
-    _loginController = TextEditingController();
-    _passwordController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _loginController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [const SizedBox(
-      height: 50.0,
-    ),
-      //login
-      CupertinoTextField(
-        controller: _loginController,
-      ),
-      const SizedBox(
-        height: 40.0,
-      ),
-      //password
-      CupertinoTextField(
-        controller: _passwordController,
-      ),
-      const SizedBox(
-        height: 40.0,
-      ),
-    ],
-    );
   }
 }
