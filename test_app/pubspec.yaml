@@ -40,8 +40,8 @@ dependencies:
   mrx_charts: ^0.1.3
   flutter_bloc: ^8.1.1
   spreadsheet_table: ^1.0.0
-  hive: ^2.2.3
   hive_generator: ^2.0.0
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:

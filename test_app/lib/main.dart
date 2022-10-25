@@ -7,18 +7,18 @@ import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_app/hive_classes/hive_auth.dart';
 
 
 void main() async {
-  var path = Directory.current.path;
+  runApp(const MyApp());
+  var path = Directory.current.path + "db/";
   Hive
-    ..init(path)
+    ..initFlutter(path)
     ..registerAdapter(PersonAdapter());
   
   var authBox = await Hive.openBox('Persons');
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
