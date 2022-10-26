@@ -9,14 +9,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_app/hive_classes/hive_auth.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 void main() async {
   runApp(const MyApp());
-  var path = Directory.current.path + "db/";
-  Hive
-    ..initFlutter(path)
-    ..registerAdapter(PersonAdapter());
+  final directory = getApplicationDocumentsDirectory();
+  await Hive.initFlutter((await directory).path + "/db");
+  Hive.registerAdapter(PersonAdapter());
   
   var authBox = await Hive.openBox('Persons');
 }
