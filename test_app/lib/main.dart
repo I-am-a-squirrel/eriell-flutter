@@ -16,9 +16,6 @@ void main() async {
   runApp(const MyApp());
   final directory = getApplicationDocumentsDirectory();
   await Hive.initFlutter((await directory).path + "/db");
-  Hive.registerAdapter(PersonAdapter());
-  
-  var authBox = await Hive.openBox('Persons');
 }
 
 class MyApp extends StatelessWidget {
@@ -287,11 +284,14 @@ class _SignForm extends StatefulWidget {
 class _SignFormState extends State<_SignForm> {
   late TextEditingController _loginController;
   late TextEditingController _passwordController;
+  late Box<dynamic> authBox;
 
   @override
-  void initState() {
+  void initState() async {
     _loginController = TextEditingController();
     _passwordController = TextEditingController();
+    Hive.registerAdapter(PersonAdapter());
+    authBox = await Hive.openBox('Persons');
     super.initState();
   }
 
@@ -302,7 +302,10 @@ class _SignFormState extends State<_SignForm> {
         CupertinoPageRoute(
           builder: (context) => const DataView(),
         ),
-      )
+      );
+    }
+    if(authBox.containsKey(login) && !(authBox.get(login) == password)) {
+      Navigator//pop-up with registration form
     }
   }
 
@@ -337,7 +340,7 @@ class _SignFormState extends State<_SignForm> {
       CupertinoButton(
         child: const Text('Sign In'),
         onPressed: () {
-          userCheck(_loginController.text, _passwordController.text)
+          userCheck(_loginController.text, _passwordController.text);
         },
       ),
     ],
