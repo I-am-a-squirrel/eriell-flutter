@@ -82,23 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return CupertinoPageScaffold(
-      child: Column(
-        children: <Widget>[
-          const _SignForm(),
-          CupertinoButton(
-            child: const Text('Sign In'),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => const DataView(),
-                ),
-              );
-            },
-          )
-        ],
-      ),
+    return const CupertinoPageScaffold(
+      child: _SignForm(),
     );
   }
 }
@@ -310,6 +295,15 @@ class _SignFormState extends State<_SignForm> {
     super.initState();
   }
 
+  void userCheck(String login, String password) {
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => const DataView(),
+      ),
+    )
+  }
+
   @override
   void dispose() {
     _loginController.dispose();
@@ -324,6 +318,7 @@ class _SignFormState extends State<_SignForm> {
     ),
       //login
       CupertinoTextField(
+        placeholder: "Login",
         controller: _loginController,
       ),
       const SizedBox(
@@ -331,10 +326,17 @@ class _SignFormState extends State<_SignForm> {
       ),
       //password
       CupertinoTextField(
+        placeholder: "Password",
         controller: _passwordController,
       ),
       const SizedBox(
         height: 40.0,
+      ),
+      CupertinoButton(
+        child: const Text('Sign In'),
+        onPressed: () {
+          userCheck(_loginController.text, _passwordController.text)
+        },
       ),
     ],
     );
