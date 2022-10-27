@@ -296,12 +296,14 @@ class _SignFormState extends State<_SignForm> {
   }
 
   void userCheck(String login, String password) {
-    Navigator.pushReplacement(
-      context,
-      CupertinoPageRoute(
-        builder: (context) => const DataView(),
-      ),
-    )
+    if(authBox.containsKey(login) && (authBox.get(login) == password)) {
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => const DataView(),
+        ),
+      )
+    }
   }
 
   @override
