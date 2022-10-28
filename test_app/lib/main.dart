@@ -274,6 +274,10 @@ class _TableState extends State<_Table> {
   }
 }
 
+class PersonsCubit extends Cubit<Box<dynamic>> {
+  PersonsCubit(initialBox) : super(initialBox);
+}
+
 class _SignForm extends StatefulWidget {
   const _SignForm({super.key});
 
@@ -305,7 +309,12 @@ class _SignFormState extends State<_SignForm> {
       );
     }
     if(authBox.containsKey(login) && !(authBox.get(login) == password)) {
-      Navigator//pop-up with registration form
+      Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => const _CreateUserForm(),
+          ),
+      );//pop-up with registration form
     }
   }
 
@@ -344,6 +353,39 @@ class _SignFormState extends State<_SignForm> {
         },
       ),
     ],
+    );
+  }
+}
+
+class _CreateUserForm extends StatefulWidget {
+  const _CreateUserForm({super.key});
+
+  @override
+  State<_CreateUserForm> createState() => _CreateUserFormState();
+}
+
+class _CreateUserFormState extends State<_CreateUserForm> {
+  late TextEditingController _login;
+  late TextEditingController _password;
+
+  @override
+  void initState() {
+    _login = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _login.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(context) {
+    return const CupertinoPopupSurface(
+      child:
     );
   }
 }
