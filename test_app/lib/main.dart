@@ -11,7 +11,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_app/hive_classes/hive_auth.dart';
 import 'package:path_provider/path_provider.dart';
 
-
 void main() async {
   runApp(const MyApp());
   final directory = getApplicationDocumentsDirectory();
@@ -70,7 +69,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -243,7 +241,7 @@ class _TableState extends State<_Table> {
         ),
         child: SpreadsheetTable(
           cellWidth: MediaQuery.of(context).size.width / 4,
-          cellHeight: MediaQuery.of(context).size.height / (3*state.length),
+          cellHeight: MediaQuery.of(context).size.height / (3 * state.length),
           colCount: 1,
           rowsCount: state.length,
           colHeaderBuilder: (_, __) => const FittedBox(
@@ -291,16 +289,20 @@ class _SignFormState extends State<_SignForm> {
   late Box<dynamic> authBox;
 
   @override
-  void initState() async {
+  void initState() {
+    initAsync();
     _loginController = TextEditingController();
     _passwordController = TextEditingController();
     Hive.registerAdapter(PersonAdapter());
-    authBox = await Hive.openBox('Persons');
     super.initState();
   }
 
-  void userCheck(String login, String password) {
-    if(authBox.containsKey(login) && (authBox.get(login) == password)) {
+  void initAsync() async {
+    authBox = await Hive.openBox('Persons');
+  }
+
+  void userCheck(String login, String password, Box<dynamic> authBox) {
+    if (authBox.containsKey(login) && (authBox.get(login) == password)) {
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
@@ -308,13 +310,33 @@ class _SignFormState extends State<_SignForm> {
         ),
       );
     }
-    if(authBox.containsKey(login) && !(authBox.get(login) == password)) {
+    if (authBox.containsKey(login) && !(authBox.get(login) == password)) {
+      showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: const Text('User error'),
+          content: const Text('There is no user with this login'),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('close'),
+            ),
+          ],
+        ),
+      );
+    }
+    if (!authBox.containsKey(login)) {
       Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(
-              builder: (context) => const _CreateUserForm(),
-          ),
-      );//pop-up with registration form
+        context,
+        CupertinoPageRoute(
+          builder: (context) {
+            return _CreateUserForm(authBox: authBox);
+          },
+        ),
+      ); //pop-up with registration form
     }
   }
 
@@ -327,65 +349,133 @@ class _SignFormState extends State<_SignForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [const SizedBox(
-      height: 50.0,
-    ),
-      //login
-      CupertinoTextField(
-        placeholder: "Login",
-        controller: _loginController,
+    return BlocProvider(
+      create: (_) => PersonsCubit(authBox),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            height: 50.0,
+          ),
+          //login
+          CupertinoTextField(
+            placeholder: "Login",
+            controller: _loginController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          //password
+          CupertinoTextField(
+            placeholder: "Password",
+            controller: _passwordController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          CupertinoButton(
+            child: const Text('Sign In'),
+            onPressed: () {
+              userCheck(
+                  _loginController.text, _passwordController.text, authBox);
+            },
+          ),
+        ],
       ),
-      const SizedBox(
-        height: 40.0,
-      ),
-      //password
-      CupertinoTextField(
-        placeholder: "Password",
-        controller: _passwordController,
-      ),
-      const SizedBox(
-        height: 40.0,
-      ),
-      CupertinoButton(
-        child: const Text('Sign In'),
-        onPressed: () {
-          userCheck(_loginController.text, _passwordController.text);
-        },
-      ),
-    ],
     );
   }
 }
 
 class _CreateUserForm extends StatefulWidget {
-  const _CreateUserForm({super.key});
+  const _CreateUserForm({super.key, required this.authBox});
 
+  final Box<dynamic> authBox;
   @override
   State<_CreateUserForm> createState() => _CreateUserFormState();
 }
 
 class _CreateUserFormState extends State<_CreateUserForm> {
-  late TextEditingController _login;
-  late TextEditingController _password;
+  late TextEditingController _loginController;
+  late TextEditingController _passwordController;
 
   @override
   void initState() {
-    _login = TextEditingController();
-    _password = TextEditingController();
+    _loginController = TextEditingController();
+    _passwordController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _login.dispose();
-    _password.dispose();
+    _loginController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  void createUser(String login, String password, Box<dynamic> authBox) {
+    if (authBox.containsKey(login)) {
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => CupertinoPageScaffold(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                SizedBox(
+                  height: 40.0,
+                ),
+                Text("User with this name already exists"),
+                _SignForm(),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      final person = Person(login: login, password: password);
+      authBox.add(person);
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => const DataView(),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(context) {
-    return const CupertinoPopupSurface(
-      child:
-    );
+    return BlocBuilder<PersonsCubit, Box<dynamic>>(
+        builder: (context, state) => CupertinoPopupSurface(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  CupertinoTextField(
+                    placeholder: "Login",
+                    controller: _loginController,
+                  ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  CupertinoTextField(
+                    placeholder: "Password",
+                    controller: _passwordController,
+                  ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  CupertinoButton(
+                    child: const Text('Create user'),
+                    onPressed: () {
+                      createUser(_loginController.text,
+                          _passwordController.text, widget.authBox);
+                    },
+                  )
+                ],
+              ),
+            ));
   }
 }
