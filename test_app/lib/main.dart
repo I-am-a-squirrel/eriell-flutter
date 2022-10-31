@@ -45,13 +45,13 @@ class _MySplashPageState extends State<MySplashPage> {
   Widget build(BuildContext context) {
     return EasySplashScreen(
       logo: Image.asset('assets/images/eriell_logo.png'),
-      navigator: const MyHomePage(title: 'ERIELL Demo App'),
+      navigator: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -61,8 +61,6 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -271,11 +269,11 @@ class _TableState extends State<_Table> {
     });
   }
 }
-
+/*
 class PersonsCubit extends Cubit<Box<dynamic>> {
   PersonsCubit(initialBox) : super(initialBox);
 }
-
+*/
 class _SignForm extends StatefulWidget {
   const _SignForm({super.key});
 
@@ -349,39 +347,36 @@ class _SignFormState extends State<_SignForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PersonsCubit(authBox),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: 50.0,
-          ),
-          //login
-          CupertinoTextField(
-            placeholder: "Login",
-            controller: _loginController,
-          ),
-          const SizedBox(
-            height: 40.0,
-          ),
-          //password
-          CupertinoTextField(
-            placeholder: "Password",
-            controller: _passwordController,
-          ),
-          const SizedBox(
-            height: 40.0,
-          ),
-          CupertinoButton(
-            child: const Text('Sign In'),
-            onPressed: () {
-              userCheck(
-                  _loginController.text, _passwordController.text, authBox);
-            },
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 50.0,
+        ),
+        //login
+        CupertinoTextField(
+          placeholder: "Login",
+          controller: _loginController,
+        ),
+        const SizedBox(
+          height: 40.0,
+        ),
+        //password
+        CupertinoTextField(
+          placeholder: "Password",
+          controller: _passwordController,
+        ),
+        const SizedBox(
+          height: 40.0,
+        ),
+        CupertinoButton(
+          child: const Text('Sign In'),
+          onPressed: () {
+            userCheck(
+                _loginController.text, _passwordController.text, authBox);
+          },
+        ),
+      ],
     );
   }
 }
@@ -418,6 +413,7 @@ class _CreateUserFormState extends State<_CreateUserForm> {
         context,
         CupertinoPageRoute(
           builder: (context) => CupertinoPageScaffold(
+            backgroundColor: CupertinoColors.lightBackgroundGray,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -445,37 +441,34 @@ class _CreateUserFormState extends State<_CreateUserForm> {
 
   @override
   Widget build(context) {
-    return BlocBuilder<PersonsCubit, Box<dynamic>>(
-        builder: (context, state) => CupertinoPopupSurface(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  CupertinoTextField(
-                    placeholder: "Login",
-                    controller: _loginController,
-                  ),
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  CupertinoTextField(
-                    placeholder: "Password",
-                    controller: _passwordController,
-                  ),
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  CupertinoButton(
-                    child: const Text('Create user'),
-                    onPressed: () {
-                      createUser(_loginController.text,
-                          _passwordController.text, widget.authBox);
-                    },
-                  )
-                ],
-              ),
-            ));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 40.0,
+        ),
+        CupertinoTextField(
+          placeholder: "Login",
+          controller: _loginController,
+        ),
+        const SizedBox(
+          height: 40.0,
+        ),
+        CupertinoTextField(
+          placeholder: "Password",
+          controller: _passwordController,
+        ),
+        const SizedBox(
+          height: 40.0,
+        ),
+        CupertinoButton(
+          child: const Text('Create user'),
+          onPressed: () {
+            createUser(_loginController.text, _passwordController.text,
+                widget.authBox);
+          },
+        )
+      ],
+    );
   }
 }
