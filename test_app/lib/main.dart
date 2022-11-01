@@ -100,8 +100,14 @@ class DataCubit extends Cubit<Map<String, double>> {
   }
 }
 
+class PersonCubit extends Cubit<String> {
+  PersonCubit(initialData) : super(initialData);
+}
+
 class DataView extends StatefulWidget {
-  const DataView({super.key});
+  const DataView({super.key, required this.userName});
+
+  final String userName;
 
   @override
   State<DataView> createState() => _DataViewState();
@@ -118,17 +124,22 @@ class _DataViewState extends State<DataView> {
         'fourth': 7.0,
         'fifth': 11.0,
       }),
-      child: CupertinoPageScaffold(
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return Center(
-              child: orientation == Orientation.portrait
-                  ? const _PortraitView() //The widget for portrait orientation.
-                  : const _LandscapeView(), //The widget for landscape orientation.
-            );
-          },
-        ),
-      ),
+      child: Builder(builder: (BuildContext context) {
+        return BlocProvider(
+            create: (_) => PersonCubit(widget.userName),
+          child: CupertinoPageScaffold(
+            child: OrientationBuilder(
+              builder: (context, orientation) {
+                return Center(
+                  child: orientation == Orientation.portrait
+                      ? const _PortraitView() //The widget for portrait orientation.
+                      : const _LandscapeView(), //The widget for landscape orientation.
+                );
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 }
@@ -143,28 +154,32 @@ class _PortraitView extends StatefulWidget {
 class _PortraitViewState extends State<_PortraitView> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Portrait View'),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Center(
-              child: _Chart(),
-              //child: Text('Place for chart'),
+    return BlocBuilder<PersonCubit, String>(
+        builder: (context, state) {
+          return CupertinoPageScaffold(
+            navigationBar: const CupertinoNavigationBar(
+              middle: Text('Portrait View'),
             ),
-            SizedBox(
-              height: 40.0,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Hello, $state!"),
+                  const Center(
+                    child: _Chart(),
+                    //child: Text('Place for chart'),
+                  ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  const Center(
+                    child: _Table(),
+                  ),
+                ],
+              ),
             ),
-            Center(
-              child: _Table(),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -269,11 +284,7 @@ class _TableState extends State<_Table> {
     });
   }
 }
-/*
-class PersonsCubit extends Cubit<Box<dynamic>> {
-  PersonsCubit(initialBox) : super(initialBox);
-}
-*/
+
 class _SignForm extends StatefulWidget {
   const _SignForm({super.key});
 
@@ -304,7 +315,9 @@ class _SignFormState extends State<_SignForm> {
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
-          builder: (context) => const DataView(),
+          builder: (context) => DataView(
+            userName: login,
+          ),
         ),
       );
     }
@@ -372,8 +385,7 @@ class _SignFormState extends State<_SignForm> {
         CupertinoButton(
           child: const Text('Sign In'),
           onPressed: () {
-            userCheck(
-                _loginController.text, _passwordController.text, authBox);
+            userCheck(_loginController.text, _passwordController.text, authBox);
           },
         ),
       ],
@@ -413,7 +425,6 @@ class _CreateUserFormState extends State<_CreateUserForm> {
         context,
         CupertinoPageRoute(
           builder: (context) => CupertinoPageScaffold(
-            backgroundColor: CupertinoColors.lightBackgroundGray,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -433,7 +444,9 @@ class _CreateUserFormState extends State<_CreateUserForm> {
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
-          builder: (context) => const DataView(),
+          builder: (context) => DataView(
+            userName: login,
+          ),
         ),
       );
     }
@@ -441,34 +454,36 @@ class _CreateUserFormState extends State<_CreateUserForm> {
 
   @override
   Widget build(context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(
-          height: 40.0,
-        ),
-        CupertinoTextField(
-          placeholder: "Login",
-          controller: _loginController,
-        ),
-        const SizedBox(
-          height: 40.0,
-        ),
-        CupertinoTextField(
-          placeholder: "Password",
-          controller: _passwordController,
-        ),
-        const SizedBox(
-          height: 40.0,
-        ),
-        CupertinoButton(
-          child: const Text('Create user'),
-          onPressed: () {
-            createUser(_loginController.text, _passwordController.text,
-                widget.authBox);
-          },
-        )
-      ],
+    return CupertinoPageScaffold(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            height: 40.0,
+          ),
+          CupertinoTextField(
+            placeholder: "Login",
+            controller: _loginController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          CupertinoTextField(
+            placeholder: "Password",
+            controller: _passwordController,
+          ),
+          const SizedBox(
+            height: 40.0,
+          ),
+          CupertinoButton(
+            child: const Text('Create user'),
+            onPressed: () {
+              createUser(_loginController.text, _passwordController.text,
+                  widget.authBox);
+            },
+          )
+        ],
+      ),
     );
   }
 }
