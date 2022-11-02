@@ -43,6 +43,7 @@ dependencies:
   hive_generator: ^2.0.0
   hive_flutter: ^1.1.0
   path_provider: ^2.0.11
+  icons_launcher: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,7 @@ flutter:
   assets:
     - assets/images/eriell_logo.svg
     - assets/images/eriell_logo.png
+    - assets/images/eriell_logo_launcher.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -100,3 +102,19 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+icons_launcher:
+  image_path: 'assets/images/eriell_logo_launcher.png'
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    web:
+      enable: true
+    macos:
+      enable: true
+    windows:
+      enable: true
+    linux:
+      enable: true

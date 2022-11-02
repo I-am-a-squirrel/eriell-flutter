@@ -11,6 +11,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_app/hive_classes/hive_auth.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:icons_launcher/cli_commands.dart';
+import 'package:icons_launcher/utils/cli_logger.dart';
+import 'package:icons_launcher/utils/constants.dart';
+//import 'package:icons_launcher/utils/flavor_helper.dart';
+import 'package:icons_launcher/utils/icon.dart';
+import 'package:icons_launcher/utils/template.dart';
+import 'package:icons_launcher/utils/utils.dart';
+
 void main() async {
   runApp(const MyApp());
   final directory = getApplicationDocumentsDirectory();
