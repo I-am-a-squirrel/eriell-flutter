@@ -172,6 +172,9 @@ class _PortraitViewState extends State<_PortraitView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(
+                    height: 40.0,
+                  ),
                   Text("Hello, $state!"),
                   const Center(
                     child: _Chart(),
@@ -319,7 +322,7 @@ class _SignFormState extends State<_SignForm> {
   }
 
   void userCheck(String login, String password, Box<dynamic> authBox) {
-    if (authBox.containsKey(login) && (authBox.get(login) == password)) {
+    if (authBox.containsKey(login) && (authBox.get(login).password == password)) {
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
@@ -334,7 +337,7 @@ class _SignFormState extends State<_SignForm> {
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
           title: const Text('User error'),
-          content: const Text('There is no user with this login'),
+          content: const Text('Wrong password'),
           actions: <CupertinoDialogAction>[
             CupertinoDialogAction(
               isDefaultAction: true,
@@ -448,7 +451,7 @@ class _CreateUserFormState extends State<_CreateUserForm> {
       );
     } else {
       final person = Person(login: login, password: password);
-      authBox.add(person);
+      widget.authBox.put(login, person);
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
@@ -466,6 +469,10 @@ class _CreateUserFormState extends State<_CreateUserForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(
+            height: 40.0,
+          ),
+          const Text("Create new user"),
           const SizedBox(
             height: 40.0,
           ),
