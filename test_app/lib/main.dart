@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-//import 'package:flutter/material.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:mrx_charts/mrx_charts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,14 +8,6 @@ import 'package:spreadsheet_table/spreadsheet_table.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_app/hive_classes/hive_auth.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:icons_launcher/cli_commands.dart';
-import 'package:icons_launcher/utils/cli_logger.dart';
-import 'package:icons_launcher/utils/constants.dart';
-//import 'package:icons_launcher/utils/flavor_helper.dart';
-import 'package:icons_launcher/utils/icon.dart';
-import 'package:icons_launcher/utils/template.dart';
-import 'package:icons_launcher/utils/utils.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -134,7 +124,7 @@ class _DataViewState extends State<DataView> {
       }),
       child: Builder(builder: (BuildContext context) {
         return BlocProvider(
-            create: (_) => PersonCubit(widget.userName),
+          create: (_) => PersonCubit(widget.userName),
           child: CupertinoPageScaffold(
             child: OrientationBuilder(
               builder: (context, orientation) {
@@ -162,35 +152,34 @@ class _PortraitView extends StatefulWidget {
 class _PortraitViewState extends State<_PortraitView> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PersonCubit, String>(
-        builder: (context, state) {
-          return CupertinoPageScaffold(
-            navigationBar: const CupertinoNavigationBar(
-              middle: Text('Portrait View'),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  Text("Hello, $state!"),
-                  const Center(
-                    child: _Chart(),
-                    //child: Text('Place for chart'),
-                  ),
-                  const SizedBox(
-                    height: 40.0,
-                  ),
-                  const Center(
-                    child: _Table(),
-                  ),
-                ],
+    return BlocBuilder<PersonCubit, String>(builder: (context, state) {
+      return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('Portrait View'),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 40.0,
               ),
-            ),
-          );
-        });
+              Text("Hello, $state!"),
+              const Center(
+                child: _Chart(),
+                //child: Text('Place for chart'),
+              ),
+              const SizedBox(
+                height: 40.0,
+              ),
+              const Center(
+                child: _Table(),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -322,7 +311,8 @@ class _SignFormState extends State<_SignForm> {
   }
 
   void userCheck(String login, String password, Box<dynamic> authBox) {
-    if (authBox.containsKey(login) && (authBox.get(login).password == password)) {
+    if (authBox.containsKey(login) &&
+        (authBox.get(login).password == password)) {
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
@@ -332,21 +322,13 @@ class _SignFormState extends State<_SignForm> {
         ),
       );
     }
-    if (authBox.containsKey(login) && !(authBox.get(login) == password)) {
+    if (authBox.containsKey(login) &&
+        (authBox.get(login).password != password)) {
       showCupertinoModalPopup<void>(
         context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: const Text('User error'),
-          content: const Text('Wrong password'),
-          actions: <CupertinoDialogAction>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('close'),
-            ),
-          ],
+        builder: (BuildContext context) => const CupertinoAlertDialog(
+          title: Text('User error'),
+          content: Text('Wrong password'),
         ),
       );
     }
