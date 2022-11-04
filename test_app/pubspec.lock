@@ -480,7 +480,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
-  provider:
+  pointycastle:
     dependency: transitive
     description:
       name: pointycastle
